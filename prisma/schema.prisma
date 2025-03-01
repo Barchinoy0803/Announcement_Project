@@ -12,3 +12,102 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Region {
+  id                  Int                   @id() @default(autoincrement())
+  name                String
+  User                User[]
+  Announcement_Region Announcement_Region[]
+}
+
+model User {
+  id           Int            @id() @default(autoincrement())
+  fullname     String
+  phone        String         @unique
+  email        String         @unique
+  role         Role           @default(USER)
+  balance      Int            @default(5000000)
+  password     String
+  status       UserStatus     @default(INACTIVE)
+  regionId     Int
+  region       Region         @relation(fields: [regionId], references: [id])
+  Announcement Announcement[]
+  Comment      Comment[]
+  Likes        Likes[]
+  Transaction  Transaction[]
+}
+
+model Category {
+  id           Int            @id() @default(autoincrement())
+  name         String
+  Announcement Announcement[]
+}
+
+model Announcement {
+  id                  Int                   @id() @default(autoincrement())
+  name                String
+  photo               String
+  description         String
+  balance             Int                   @default(0)
+  target              Int
+  status              Status                @default(PENDING)
+  userId              Int
+  user                User                  @relation(fields: [userId], references: [id])
+  categoryId          Int
+  category            Category              @relation(fields: [categoryId], references: [id])
+  Comment             Comment[]
+  Likes               Likes[]
+  Announcement_Region Announcement_Region[]
+  Transaction         Transaction[]
+}
+
+model Announcement_Region {
+  id             Int          @id() @default(autoincrement())
+  regionId       Int
+  region         Region       @relation(fields: [regionId], references: [id])
+  announcementId Int
+  announcement   Announcement @relation(fields: [announcementId], references: [id])
+}
+
+model Transaction {
+  id             Int          @id() @default(autoincrement())
+  userId         Int
+  user           User         @relation(fields: [userId], references: [id])
+  announcementId Int
+  announcement   Announcement @relation(fields: [announcementId], references: [id])
+  summa          Int
+}
+
+model Comment {
+  id             Int          @id() @default(autoincrement())
+  text           String
+  announcementId Int
+  announcement   Announcement @relation(fields: [announcementId], references: [id])
+  userId         Int
+  user           User         @relation(fields: [userId], references: [id])
+}
+
+model Likes {
+  id             Int          @id() @default(autoincrement())
+  announcementId Int
+  announcement   Announcement @relation(fields: [announcementId], references: [id])
+  userid         Int
+  user           User         @relation(fields: [userid], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  PENDING
+  ACTIVE
+  INACTIVE
+  COMPLETED
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
