@@ -7,6 +7,5 @@ export function selfPolice(data) {
         } else {
             res.status(405).send({ message: " Not alloweddd ❗" });
         }
-
     }
 }

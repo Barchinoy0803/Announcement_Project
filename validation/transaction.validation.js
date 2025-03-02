@@ -2,9 +2,9 @@ import Joi from "joi";
 
 export function transactionValidation(data) {
     const transactionSchema = Joi.object({
-        userId: Joi.number().required(),
-        announcementId: Joi.number().required(),
-        summa: Joi.number().required()
+        userId: Joi.number().positive(),
+        announcementId: Joi.number().required().positive(),
+        summa: Joi.number().required().positive()
     })
     return transactionSchema.validate(data)
 }

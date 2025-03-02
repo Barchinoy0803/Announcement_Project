@@ -5,7 +5,20 @@ const client = new PrismaClient()
 
 async function getAll(req, res) {
     try {
-        let regions = await client.region.findMany()
+        let { page = 1, limit = 10 } = req.query
+        page = parseInt(page, 10)
+        limit = parseInt(limit, 10)
+        let regions = await client.region.findMany({
+            skip: (page - 1) * limit,
+            take: limit,
+            include: {
+                Announcement_Region: {
+                    include: {
+                        announcement: true
+                    }
+                }
+            }
+        })
         if (!regions.length) return res.status(200).send({ msg: "Regions are empty!" })
         res.status(200).send({ data: regions })
     } catch (error) {

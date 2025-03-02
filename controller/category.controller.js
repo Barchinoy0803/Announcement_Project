@@ -5,7 +5,14 @@ const client = new PrismaClient()
 
 async function getAll(req, res) {
     try {
-        let categories = await client.category.findMany()
+        let { page = 1, limit = 10 } = req.query
+        page = parseInt(page, 10)
+        limit = parseInt(limit, 10)
+        let categories = await client.category.findMany({
+            include: { Announcement: true },
+            skip: (page - 1) * limit,
+            take: limit,
+        })
         if (!categories.length) return res.status(200).send({ msg: "Categories are empty!" })
         res.status(200).send({ data: categories })
     } catch (error) {
@@ -16,7 +23,7 @@ async function getAll(req, res) {
 async function getOne(req, res) {
     try {
         let { id } = req.params
-        let category = await client.category.findUnique({ where: { id: +id } })
+        let category = await client.category.findUnique({ where: { id: +id }, include: { Announcement: true } })
         if (!category) return res.status(200).send({ msg: "Not found!" })
         res.status(200).send({ data: category })
     } catch (error) {

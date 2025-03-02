@@ -96,7 +96,16 @@ async function activate(req, res) {
 
 async function getAll(req, res) {
     try {
-        let users = await client.user.findMany()
+        let { page = 1, limit = 10 } = req.query
+        page = parseInt(page, 10)
+        limit = parseInt(limit, 10)
+        let users = await client.user.findMany({
+            skip: (page - 1) * limit,
+            take: limit,
+            include: {
+                region: true
+            }
+        })
         if (!users.length) return res.status(200).send({ msg: "Users are empty!" })
         res.status(200).send({ data: users })
     } catch (error) {
@@ -134,8 +143,8 @@ async function update(req, res) {
         if (error) return res.status(400).send({ msg: error.details[0].message })
 
         let user = await client.user.update({
-            where: {id: +id},
-            data: body 
+            where: { id: +id },
+            data: body
         })
         res.status(200).send({ data: user })
     } catch (error) {

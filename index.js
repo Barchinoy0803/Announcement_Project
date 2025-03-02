@@ -1,6 +1,6 @@
 import express from "express"
 import dotenv from "dotenv"
-import mainRouter from "./router/main.routes.js"
+import { mainRouter } from "./router/main.routes.js"
 dotenv.config()
 
 const PORT = process.env.PORT

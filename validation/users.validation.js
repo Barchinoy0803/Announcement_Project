@@ -7,7 +7,7 @@ function userValidation(data) {
         email: Joi.string().email().required(),
         password: Joi.string().min(8).required(),
         role: Joi.string(),
-        regionId: Joi.number(),
+        regionId: Joi.number().positive(),
     })
     return userSchema.validate(data)
 }
@@ -19,7 +19,7 @@ function userValidationUpdate(data) {
         email: Joi.string().email(),
         password: Joi.string().min(8),
         role: Joi.string(),
-        regionId: Joi.number(),
+        regionId: Joi.number().positive(),
     })
     return userSchema.validate(data)
 }
